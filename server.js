@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const axios = require('axios')
+var ringcaptcha = require('ringcaptcha-nodejs');
 const qs = require('qs');
 const app = express();
 app.use(cors({
@@ -19,8 +20,9 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
-let appKey = 'eqako3e9asago9omifu9';
-let apiKey = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd';
+ringcaptcha.app_key = 'eqako3e9asago9omifu9';//Add Your App Key
+ringcaptcha.api_key = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd'; //Add Your API Key
+ringcaptcha.secret_key = 'yqezyfy3akizela6ere3'; //Add Your Secret Key
 const rooms = new Map();
 
 app.get('/rooms', (req, res) => {
@@ -41,24 +43,12 @@ app.post('/rooms', (req, res) => {
 });
 
 app.post('/sendSms', (req, res) => {
-  const {phoneNumber} = req.body;
-  
-  axios.post(`https://api.ringcaptcha.com/${appKey}/code/sms`, qs.stringify({
-    phone: phoneNumber,
-    api_key: apiKey
-  }), {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-  .then(response => {
-    console.log(response.data);
-    res.send('Сообщение было отправлено на номер: ' + phoneNumber);
-  })
-  .catch(error => {
-    console.log(error);
-    res.status(500).send('Произошла ошибка: ' + error.message);
+  const {phone, phoneCode} = req.body;
+  data = {mobile: phone, country_code: phoneCode,service:'SMS'}
+  ringcaptcha.sendingPINCode(data, function (response) {
+  console.log(response);
   });
+ 
 });
 
 

@@ -17,7 +17,8 @@ const io = new Server(server, {
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 3000;
+
 const rooms = new Map();
 
 app.get('/rooms', (req, res) => {

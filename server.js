@@ -1,9 +1,9 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
+var TeleSignSDK = require('telesignsdk');
 const cors = require('cors');
 const axios = require('axios')
-const qs = require('qs');
 const app = express();
 app.use(cors({
   origin: '*'
@@ -18,10 +18,26 @@ const io = new Server(server, {
   }
 });
 
+const customerId = "0FC18263-2B75-4265-B820-635171ACF840";
+const apiKey = "RjGVcRxUqRExpB5jcQ4C0Usp2XELdXMP13nq5pnNUS3S+xi5Sq0eWniN3rMx5S5LjMOHSeXZJbgmx1cw1zDkbQ==";
+const rest_endpoint = "https://rest-api.telesign.com";
+const timeout = 10*1000; // 10 secs
+
+const client = new TeleSignSDK( customerId,
+apiKey,
+rest_endpoint,
+timeout // optional
+// userAgent
+);
+
+const phoneNumber = "32473368733";
+const message = "You're scheduled for a dentist appointment at 2:30PM.";
+const messageType = "ARN";
+
+
+
 const PORT = process.env.PORT || 3000;
-app_key = 'eqako3e9asago9omifu9';//Add Your App Key
-api_key = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd'; //Add Your API Key
-secret_key = 'yqezyfy3akizela6ere3'; //Add Your Secret Key
+
 const rooms = new Map();
 
 app.get('/rooms', (req, res) => {
@@ -45,33 +61,17 @@ app.post('/sendSms', async (req, res) => {
   const {phone, phoneCode} = req.body;
   // Полный номер телефона
   const fullPhone = phoneCode + phone;
-  // Конфигурация запроса
-  const options = {
-    method: 'POST',
-    url: `https://api.ringcaptcha.com/${app_key}/code/sms`,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    data: qs.stringify({
-      phone: fullPhone,
-      api_key: api_key,
-    })
-  };
-  try {
-    // Отправить запрос
-    const response = await axios(options);
-    // Проверить статус ответа
-    if (response.data.status === 'SUCCESS') {
-      console.log('SMS sent successfully');
-      res.send('SMS sent successfully');
+  function messageCallback(error, responseBody) {
+    if (error === null) {
+    console.log(`Messaging response for messaging phone number: ${phoneNumber}` +
+        ` => code: ${responseBody["status"]["code"]}` +
+        `, description: ${responseBody["status"]["description"]}`);
     } else {
-      console.error('Error from RingCaptcha:', response.data.message);
-      res.status(500).send('Error from RingCaptcha');
+    console.error("Unable to send message. " + error);
     }
-  } catch (error) {
-    console.error('Error sending SMS:', error);
-    res.status(500).send('Error sending SMS');
-  }
+    }
+  client.sms.message(messageCallback, phoneNumber, message, messageType);
+ 
 });
 
 

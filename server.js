@@ -39,25 +39,39 @@ app.post('/rooms', (req, res) => {
     }
     res.json([...rooms.keys()])
 });
+const login = "t79012811627"
+const password = "613389"
+
+function generateRandomDigits(length) {
+  let result = '';
+  for(let i = 0; i < length; i++) {
+    result += Math.floor(Math.random() * 10); // Generate random number between 0 and 9
+  }
+  return result;
+}
 
 app.post('/sendSms', async (req, res) => {
   const { phone, phoneCode } = req.body;
   // Полный номер телефона
   const fullPhone = phoneCode + phone;
   console.log(fullPhone)
+  
+  // Генерируем clientId и confirmationCode
+  const clientId = generateRandomDigits(10);
+  const confirmationCode = generateRandomDigits(10).substring(0,5); // Берем первые 5 символов
+
   const payload = {
     scheduleTime: "2008-07-12T14:30:01Z",
     messages: [
       {
         phone: fullPhone,
-        clientId: "1",
-        text: "Код: 13434хуй",
-        sender: "Bank",
+        clientId: clientId,
+        text: `Код: ${confirmationCode}`,
+        sender: "mySender",
       }
     ],
-    login: "t79012811627",
-    password: "613389",
-    clientId: '49320593',
+    login: login,
+    password: password,
   };
 
   try {

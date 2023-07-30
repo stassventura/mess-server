@@ -38,6 +38,12 @@ app.post('/rooms', (req, res) => {
     res.json([...rooms.keys()])
 });
 
+app.post('/sendSms', (req, res) => {
+  const {phoneNumber} = req.body
+  console.log(phoneNumber)
+});
+
+
 io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
     // socket.on('message', (msg) => {

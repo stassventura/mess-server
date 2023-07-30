@@ -3,8 +3,6 @@ const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const axios = require('axios')
-const request = require('request');
-var ringcaptcha = require('ringcaptcha-nodejs');
 const qs = require('qs');
 const app = express();
 app.use(cors({
@@ -21,9 +19,9 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
-ringcaptcha.app_key = 'eqako3e9asago9omifu9';//Add Your App Key
-ringcaptcha.api_key = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd'; //Add Your API Key
-ringcaptcha.secret_key = 'yqezyfy3akizela6ere3'; //Add Your Secret Key
+app_key = 'eqako3e9asago9omifu9';//Add Your App Key
+api_key = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd'; //Add Your API Key
+secret_key = 'yqezyfy3akizela6ere3'; //Add Your Secret Key
 const rooms = new Map();
 
 app.get('/rooms', (req, res) => {
@@ -43,13 +41,37 @@ app.post('/rooms', (req, res) => {
     res.json([...rooms.keys()])
 });
 
-app.post('/sendSms', (req, res) => {
+app.post('/sendSms', async (req, res) => {
   const {phone, phoneCode} = req.body;
-  data = {mobile: phone, country_code: phoneCode,service:'SMS'}
-  ringcaptcha.sendingPINCode(data, function (response) {
-  console.log(response);
-  });
- 
+  // Полный номер телефона
+  const fullPhone = phoneCode + phone;
+  // Конфигурация запроса
+  const options = {
+    method: 'POST',
+    url: `https://api.ringcaptcha.com/${app_key}/code/sms`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    data: qs.stringify({
+      phone: fullPhone,
+      api_key: api_key,
+    })
+  };
+  try {
+    // Отправить запрос
+    const response = await axios(options);
+    // Проверить статус ответа
+    if (response.data.status === 'SUCCESS') {
+      console.log('SMS sent successfully');
+      res.send('SMS sent successfully');
+    } else {
+      console.error('Error from RingCaptcha:', response.data.message);
+      res.status(500).send('Error from RingCaptcha');
+    }
+  } catch (error) {
+    console.error('Error sending SMS:', error);
+    res.status(500).send('Error sending SMS');
+  }
 });
 
 

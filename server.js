@@ -20,7 +20,7 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 let appKey = 'eqako3e9asago9omifu9';
-let secretKey = 'yqezyfy3akizela6ere3';
+let apiKey = '9429800ccaa1cb4c0ec4b92ca45d00ae1d0daddd';
 const rooms = new Map();
 
 app.get('/rooms', (req, res) => {
@@ -45,7 +45,7 @@ app.post('/sendSms', (req, res) => {
   
   axios.post(`https://api.ringcaptcha.com/${appKey}/code/sms`, qs.stringify({
     phone: phoneNumber,
-    api_key: secretKey
+    api_key: apiKey
   }), {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

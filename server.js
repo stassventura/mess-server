@@ -3,7 +3,6 @@ const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const axios = require('axios')
-const ringcaptcha = require('ringcaptcha');
 const app = express();
 app.use(cors({
   origin: '*'
@@ -41,16 +40,20 @@ app.post('/rooms', (req, res) => {
 });
 
 app.post('/sendSms', (req, res) => {
-  const {phoneNumber} = req.body
-  res.send(phoneNumber)
-//   ringcaptcha.sms(appKey, secretKey, phoneNumber, (err, response) => {
-//     if (err) {
-//       res.send('Произошла ошибка:', err);
-//     } else {
-//       console.log(response);
-//       res.send('Сообщение было отправлено на номер: ' + phoneNumber);
-//     }
-// });
+  const {phoneNumber} = req.body;
+  
+  axios.post(`https://api.ringcaptcha.com/${appKey}/code/sms`, {
+    phone: phoneNumber,
+    api_key: secretKey
+  })
+  .then(response => {
+    console.log(response.data);
+    res.send('Сообщение было отправлено на номер: ' + phoneNumber);
+  })
+  .catch(error => {
+    console.log(error);
+    res.status(500).send('Произошла ошибка: ' + error.message);
+  });
 });
 
 

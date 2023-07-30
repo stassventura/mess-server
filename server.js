@@ -51,7 +51,8 @@ app.post('/sendSms', async (req, res) => {
       {
         phone: fullPhone,
         clientId: "1",
-        text: "verif code: 134"
+        text: "Код: 13434хуй",
+        sender: "Bank",
       }
     ],
     login: "t79012811627",

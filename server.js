@@ -42,9 +42,13 @@ app.post('/rooms', (req, res) => {
 app.post('/sendSms', (req, res) => {
   const {phoneNumber} = req.body;
   
-  axios.post(`https://api.ringcaptcha.com/${appKey}/code/sms`, {
+  axios.post(`https://api.ringcaptcha.com/${appKey}/code/sms`, qs.stringify({
     phone: phoneNumber,
     api_key: secretKey
+  }), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   })
   .then(response => {
     console.log(response.data);

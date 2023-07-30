@@ -46,18 +46,17 @@ app.post('/sendSms', async (req, res) => {
   const fullPhone = phoneCode + phone;
   console.log(fullPhone)
   const payload = {
-    "scheduleTime": "2008-07-12T14:30:01Z",
-    "messages": [
+    scheduleTime: "2008-07-12T14:30:01Z",
+    messages: [
       {
-        "phone": fullPhone,
-        "sender": "MySender",
-        "clientId": "1",
-        "text": "verif code: 134"
+        phone: fullPhone,
+        clientId: "1",
+        text: "verif code: 134"
       }
     ],
-    "login": "t79012811627",
-    "password": "613389",
-    "clientId": '49320593',
+    login: "t79012811627",
+    password: "613389",
+    clientId: '49320593',
   };
 
   try {

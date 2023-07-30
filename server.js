@@ -42,14 +42,15 @@ app.post('/rooms', (req, res) => {
 
 app.post('/sendSms', (req, res) => {
   const {phoneNumber} = req.body
-  ringcaptcha.sms(appKey, secretKey, phoneNumber, (err, response) => {
-    if (err) {
-      res.send('Произошла ошибка:', err);
-    } else {
-      console.log(response);
-      res.send('Сообщение было отправлено на номер: ' + phoneNumber);
-    }
-});
+  res.send(phoneNumber)
+//   ringcaptcha.sms(appKey, secretKey, phoneNumber, (err, response) => {
+//     if (err) {
+//       res.send('Произошла ошибка:', err);
+//     } else {
+//       console.log(response);
+//       res.send('Сообщение было отправлено на номер: ' + phoneNumber);
+//     }
+// });
 });
 
 
@@ -66,9 +67,6 @@ io.on('connection', (socket) => {
 
 app.get('/location', async (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; 
-    // const ip = '109.89.208.58';
-    // console.log(ip)
-    // const ip = '185.237.74.247';
     try {
       const response = await axios.get(`https://ipapi.co/${ip}/json/`);
       const country = response.data.country;

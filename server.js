@@ -52,13 +52,13 @@ io.on('connection', (socket) => {
 app.get('/location', async (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; 
     // const ip = '109.89.208.58';
-    console.log("Вызов")
+    console.log(ip)
     // const ip = '185.237.74.247';
     try {
       const response = await axios.get(`https://ipapi.co/${ip}/json/`);
       const country = response.data.country;
       const language = req.headers['accept-language'].split(',')[0];
-      console.log(country, language)
+      console.log(ip, country, language)
       res.json({ country, language });
     } catch (error) {
       console.log(error);

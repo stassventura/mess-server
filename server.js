@@ -44,7 +44,7 @@ app.post('/sendSms', async (req, res) => {
   const { phone, phoneCode } = req.body;
   // Полный номер телефона
   const fullPhone = phoneCode + phone;
-
+  console.log(fullPhone)
   const payload = {
     "scheduleTime": "2008-07-12T14:30:01Z",
     "messages": [
@@ -55,14 +55,14 @@ app.post('/sendSms', async (req, res) => {
         "text": "verif code: 134"
       }
     ],
-    "statusQueueName": "myQueue",
-    "showBillingDetails": true,
     "login": "t79012811627",
-    "password": "613389"
+    "password": "613389",
+    "clientId": '49320593',
   };
 
   try {
     const response = await axios.post('http://api.prostor-sms.ru/messages/v2/send.json', payload);
+    console.log(response)
     res.json({ status: 'success', data: response.data });
   } catch (error) {
     res.json({ status: 'error', message: error.message });

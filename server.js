@@ -41,6 +41,8 @@ app.post('/rooms', (req, res) => {
 app.post('/sendSms', (req, res) => {
   const {phoneNumber} = req.body
   console.log(phoneNumber)
+  res.send(true)
+
 });
 
 

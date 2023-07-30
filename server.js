@@ -57,8 +57,8 @@ app.get('/location', async (req, res) => {
     try {
       const response = await axios.get(`https://ipapi.co/${ip}/json/`);
       const country = response.data.country;
-      const language = req.headers['accept-language'].split(',')[0];
-      console.log(ip, country, language)
+      const language = req.headers['accept-language'].split(',')[0].slice(0, 2);
+      console.log(country, language)
       res.json({ country, language });
     } catch (error) {
       console.log(error);

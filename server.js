@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 app.get('/location', async (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; 
     // const ip = '109.89.208.58';
-    console.log(ip)
+    // console.log(ip)
     // const ip = '185.237.74.247';
     try {
       const response = await axios.get(`https://ipapi.co/${ip}/json/`);

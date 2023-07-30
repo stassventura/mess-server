@@ -67,7 +67,7 @@ app.post('/sendSms', async (req, res) => {
         phone: fullPhone,
         clientId: clientId,
         text: `Код: ${confirmationCode}`,
-        sender: "mySender",
+        // sender: "mySender",
       }
     ],
     login: login,

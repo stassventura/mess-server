@@ -1,7 +1,6 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
-var TeleSignSDK = require('telesignsdk');
 const cors = require('cors');
 const axios = require('axios')
 const app = express();
@@ -17,22 +16,6 @@ const io = new Server(server, {
     methods: ["GET", "POST"]
   }
 });
-
-const customerId = "0FC18263-2B75-4265-B820-635171ACF840";
-const apiKey = "RjGVcRxUqRExpB5jcQ4C0Usp2XELdXMP13nq5pnNUS3S+xi5Sq0eWniN3rMx5S5LjMOHSeXZJbgmx1cw1zDkbQ==";
-const rest_endpoint = "https://rest-api.telesign.com";
-const timeout = 10*1000; // 10 secs
-
-const client = new TeleSignSDK( customerId,
-apiKey,
-rest_endpoint,
-timeout // optional
-// userAgent
-);
-
-const phoneNumber = "32473368733";
-const message = "You're scheduled for a dentist appointment at 2:30PM.";
-const messageType = "ARN";
 
 
 
@@ -58,20 +41,32 @@ app.post('/rooms', (req, res) => {
 });
 
 app.post('/sendSms', async (req, res) => {
-  const {phone, phoneCode} = req.body;
+  const { phone, phoneCode } = req.body;
   // Полный номер телефона
   const fullPhone = phoneCode + phone;
-  function messageCallback(error, responseBody) {
-    if (error === null) {
-    console.log(`Messaging response for messaging phone number: ${phoneNumber}` +
-        ` => code: ${responseBody["status"]["code"]}` +
-        `, description: ${responseBody["status"]["description"]}`);
-    } else {
-    console.error("Unable to send message. " + error);
-    }
-    }
-  client.sms.message(messageCallback, phoneNumber, message, messageType);
- 
+
+  const payload = {
+    "scheduleTime": "2008-07-12T14:30:01Z",
+    "messages": [
+      {
+        "phone": fullPhone,
+        "sender": "MySender",
+        "clientId": "1",
+        "text": "verif code: 134"
+      }
+    ],
+    "statusQueueName": "myQueue",
+    "showBillingDetails": true,
+    "login": "t79012811627",
+    "password": "613389"
+  };
+
+  try {
+    const response = await axios.post('http://api.prostor-sms.ru/messages/v2/send.json', payload);
+    res.json({ status: 'success', data: response.data });
+  } catch (error) {
+    res.json({ status: 'error', message: error.message });
+  }
 });
 
 
